@@ -1,0 +1,23 @@
+<table class="table table-light mt-4" (contactos)="prueba($event)">
+  <thead class="thead-light">
+    <tr>
+      <th>#</th>
+      <th>Contacto</th>
+      <th>Direccion</th>
+      <th>Telefonos</th>
+      <th>Editar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let contacto of contactos">
+      <td>{{contacto.id}}</td>
+      <td>{{contacto.contacto}}</td>
+      <td>{{contacto.direccion}}</td>
+      <td>
+        <!-- <p *ngFor="let telefono of contacto.telefonos">{{telefono}}</p> -->
+      </td>
+      <td><a class="btn btn-warning" (click)="edit(contacto)"> Editar</a></td>
+    </tr>
+  </tbody>
+
+</table>

@@ -1,0 +1,26 @@
+{
+"contactos": [
+{
+  "id":"1",
+  "contacto": "Fermin Amador",
+  "direccion": "Herrera",
+  "telefonos": [
+    "546546546",
+    "6565456456"
+  ]
+},
+
+{
+  "id":"2",
+  "contacto": "ATL Software",
+  "direccion": "I dont know",
+  "telefonos": [
+    "165646515"
+  ]
+}
+
+]}
+
+
+
+
