@@ -1,7 +1,7 @@
 import { Icontacto } from './icontacto';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map, tap} from 'rxjs/operators';
 
 
@@ -11,39 +11,47 @@ import { map, tap} from 'rxjs/operators';
 export class ContactoService {
 
   contactos: Icontacto[];
-  contactos2: Observable<Icontacto[]>;
 
-  constructor(private http: HttpClient) {
-
-    if(localStorage.getItem("contactos") === null){
-      this.UploadContactJson().subscribe( (contactos)=>{
-        localStorage.setItem('contactos', JSON.stringify(contactos));
-        // this.contactos = contactos;
-     });
-     }
-
-   }
+  editContact = new Subject<Icontacto>();
+  updateContacts = new Subject<boolean>();
 
 
-   UploadContactJson(){
+  constructor(private http: HttpClient) {}
+
+
+   UploadContactJson():Observable<Icontacto[]>{
+
      return this.http.get<Icontacto>("http://localhost:4200/assets/contactos.json").pipe(
        map((data:Icontacto) => data.contactos)
      )
   }
 
-  getContactos(){
+  getContactos():Icontacto[]{
     return JSON.parse(localStorage.getItem('contactos'));
   }
 
   addContacto(contacto:Icontacto){
 
     this.contactos = JSON.parse(localStorage.getItem('contactos'))
-    let id = (this.contactos.length + 1).toString();
-    contacto.id = id;
+    contacto.id = (this.contactos.length + 1).toString();
     localStorage.clear();
     this.contactos.push(contacto);
     localStorage.setItem('contactos',JSON.stringify(this.contactos))
-    console.log(this.getContactos());
+    this.updateContacts.next(true);
+  }
+
+  updateContact(contactoNew:Icontacto){
+
+    this.contactos = JSON.parse(localStorage.getItem('contactos'))
+    this.contactos = this.contactos.map((contacto:Icontacto)=>{
+      if(contacto.id == contactoNew.id){
+        Object.assign(contacto,contactoNew);
+      }
+      return contacto;
+    });
+    localStorage.clear();
+    localStorage.setItem('contactos',JSON.stringify(this.contactos))
+    this.updateContacts.next(true);
 
   }
 

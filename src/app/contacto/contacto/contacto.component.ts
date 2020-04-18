@@ -7,13 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContactoComponent implements OnInit {
 
-  public valor: boolean;
+
   constructor() { }
 
   ngOnInit() {
   }
 
-  hola(){
-    this.valor = true;
-  }
 }

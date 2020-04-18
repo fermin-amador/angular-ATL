@@ -1,5 +1,4 @@
 import { Icontacto } from './../icontacto';
-import { Observable } from 'rxjs';
 import { ContactoService } from './../contacto.service';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
@@ -11,32 +10,36 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class ContactListComponent implements OnInit {
 
-contactos: Observable<Icontacto[]>;
+contactos: Icontacto[];
 contacto:Icontacto;
 
 
-@Output() listContact = new EventEmitter<Icontacto[]>();
-@Input('actualizar') update: boolean;
+
   constructor(private ContactoService:ContactoService) {
+    //Esperando cambios
+    this.ContactoService.updateContacts.subscribe(()=> this.contactos = this.ContactoService.getContactos())
 
-    console.log(this.update);
-
-   }
+  }
 
 
    ngOnInit() {
 
-    this.json();
+
+    if(localStorage.getItem("contactos") === null){
+      this.ContactoService.UploadContactJson().subscribe( (contactos)=>{
+        localStorage.setItem('contactos', JSON.stringify(contactos));
+        this.ContactoService.updateContacts.next(true);
+
+     });
+     }
+
     this.contactos = this.ContactoService.getContactos();
 
    }
 
 
-   edit(contacto){
-
-
-
-
+   edit(contacto:Icontacto){
+    this.ContactoService.editContact.next(contacto);
    }
 
 
@@ -62,12 +65,7 @@ contacto:Icontacto;
 
    json(){
 
-    if(localStorage.getItem("contactos") === null){
-      this.ContactoService.UploadContactJson().subscribe( (contactos)=>{
-        localStorage.setItem('contactos', JSON.stringify(contactos));
-        this.contactos = contactos;
-     });
-     }
+
   }
 
 

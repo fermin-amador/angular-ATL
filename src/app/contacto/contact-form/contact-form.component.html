@@ -1,3 +1,6 @@
+
+<h3 class="mb-5">Formulario de Contactos</h3>
+
 <div class="form" [formGroup]="contactForm">
 
   <input type="hidden" formControlName="id">
@@ -6,18 +9,62 @@
     <input id="contacto" class="form-control" type="text" formControlName="contacto">
   </div>
 
+  <div *ngIf="contactoInput.invalid && (contactoInput.dirty || contactoInput.touched)"  class="text-danger">
+    <a *ngIf="contactoInput.errors.required">
+        Contacto es obligatorio.
+    </a>
+  </div>
+
   <div class="form-group">
     <label for="direccion">Direccion</label>
     <input id="direccion" class="form-control" type="text" formControlName="direccion">
   </div>
 
-  <div class="form-group">
-    <label for="telefonos">Telefono</label>
-    <input id="telefonos" class="form-control" type="text" formControlName="telefonos">
+  <div *ngIf="direccionInput.invalid && (direccionInput.dirty || direccionInput.touched)" class="text-danger">
+    <a *ngIf="direccionInput.errors.required">
+      Direccion es obligatorio.
+  </a>
   </div>
 
-  <button (click)="saveContact()" class="btn btn-primary" [disabled]="!contactForm.valid">
-    Guardar
+
+
+  <button class="btn btn-primary btn-sm float-right" (click)="addTelefono()">Agregar Tel</button>
+  <div class="form-group">
+
+    <div formArrayName="telefonos" *ngFor="let tel of telefonos.controls; let i=index">
+      <label attr.for="{{'telefono' + (i + 1 )}}">Telefono {{ (i +1)}}</label>
+      <button *ngIf="i !=0" class="btn btn-danger float-right btn-sm" (click)='removeTel(i)'>eliminar</button>
+    <input id="{{'telefono' + i}}" class="form-control" type="text" [formControlName]="i" pattern="[0-9]{3}[0-9]{3}[0-9]{4}">
+    <div *ngIf="telefonos.controls[i].invalid && (telefonos.controls[i].dirty || telefonos.controls[i].touched)" class="text-danger">
+      <a *ngIf="telefonos.controls[i].errors?.required">
+        Telefono es obligatorio.
+    </a>
+
+    <a *ngIf="telefonos.controls[i].errors?.pattern">
+      No es un telefono valido.
+    </a>
+    </div>
+
+    </div>
+
+  </div>
+
+
+  <div *ngIf="!edit;else update">
+    <button *ngIf="!edit" (click)="saveContact()" class="btn btn-primary" [disabled]="!contactForm.valid">
+      Guardar
+    </button>
+</div>
+<ng-template #update>
+  <button (click)="updateContact()" class="btn btn-danger" [disabled]="!contactForm.valid">
+    Actualizar
   </button>
+  <button (click)="cancel()" class="btn btn-secondary ml-2">
+    Cancelar
+  </button>
+</ng-template>
 
 </div>
+
+
+<!-- {{contactForm.value | json }} -->

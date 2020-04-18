@@ -6,6 +6,7 @@ export interface Icontacto {
   direccion:string;
   telefonos:string[];
 
+
   contactos?:Icontacto[];
 }
 

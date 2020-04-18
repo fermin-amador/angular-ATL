@@ -1,3 +1,5 @@
+<h3 class="mb-5" style="text-align: center;">Mantenimiento de Contactos</h3>
+
 <table class="table table-light mt-4" (contactos)="prueba($event)">
   <thead class="thead-light">
     <tr>
@@ -14,7 +16,7 @@
       <td>{{contacto.contacto}}</td>
       <td>{{contacto.direccion}}</td>
       <td>
-        <!-- <p *ngFor="let telefono of contacto.telefonos">{{telefono}}</p> -->
+        <span *ngFor="let tel of contacto.telefonos"><br><b>{{tel | slice:0:3}}-{{tel | slice:3:6}}-{{tel | slice:6:10}}</b></span>
       </td>
       <td><a class="btn btn-warning" (click)="edit(contacto)"> Editar</a></td>
     </tr>
