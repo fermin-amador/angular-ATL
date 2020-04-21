@@ -1,70 +1,57 @@
-
-<h3 class="mb-5">Formulario de Contactos</h3>
+<h3 class="mb-5">Form Contact</h3>
 
 <div class="form" [formGroup]="contactForm">
-
   <input type="hidden" formControlName="id">
   <div class="form-group">
-    <label for="contacto">Contacto</label>
-    <input id="contacto" class="form-control" type="text" formControlName="contacto">
+    <label for="contact">Contact</label>
+    <input id="contact" class="form-control" type="text" formControlName="contact">
   </div>
-
-  <div *ngIf="contactoInput.invalid && (contactoInput.dirty || contactoInput.touched)"  class="text-danger">
-    <a *ngIf="contactoInput.errors.required">
-        Contacto es obligatorio.
+  <div *ngIf="contactInput.invalid && (contactInput.dirty || contactInput.touched)" class="text-danger">
+    <a *ngIf="contactInput.errors.required">
+      Contact is required.
     </a>
   </div>
 
   <div class="form-group">
-    <label for="direccion">Direccion</label>
-    <input id="direccion" class="form-control" type="text" formControlName="direccion">
+    <label for="address">Address</label>
+    <input id="address" class="form-control" type="text" formControlName="address">
+  </div>
+  <div *ngIf="addressInput.invalid && (addressInput.dirty || addressInput.touched)" class="text-danger">
+    <a *ngIf="addressInput.errors.required">
+      Address is required.
+    </a>
   </div>
 
-  <div *ngIf="direccionInput.invalid && (direccionInput.dirty || direccionInput.touched)" class="text-danger">
-    <a *ngIf="direccionInput.errors.required">
-      Direccion es obligatorio.
-  </a>
-  </div>
-
-
-
-  <button class="btn btn-primary btn-sm float-right" (click)="addTelefono()">Agregar Tel</button>
+  <button class="btn btn-primary btn-sm float-right" (click)="addPhone()">Add Phone</button>
   <div class="form-group">
-
-    <div formArrayName="telefonos" *ngFor="let tel of telefonos.controls; let i=index">
-      <label attr.for="{{'telefono' + (i + 1 )}}">Telefono {{ (i +1)}}</label>
-      <button *ngIf="i !=0" class="btn btn-danger float-right btn-sm" (click)='removeTel(i)'>eliminar</button>
-    <input id="{{'telefono' + i}}" class="form-control" type="text" [formControlName]="i" pattern="[0-9]{3}[0-9]{3}[0-9]{4}">
-    <div *ngIf="telefonos.controls[i].invalid && (telefonos.controls[i].dirty || telefonos.controls[i].touched)" class="text-danger">
-      <a *ngIf="telefonos.controls[i].errors?.required">
-        Telefono es obligatorio.
-    </a>
-
-    <a *ngIf="telefonos.controls[i].errors?.pattern">
-      No es un telefono valido.
-    </a>
+    <div formArrayName="phones" *ngFor="let phone of phones.controls; let i=index">
+      <label attr.for="{{'phone' + (i + 1 )}}">Phone {{ (i + 1)}}</label>
+      <button *ngIf="i !=0" class="btn btn-danger float-right btn-sm" (click)='removePhone(i)'>Delete</button>
+      <input id="{{'phone' + i}}" class="form-control" type="text" [formControlName]="i"
+        pattern="[0-9]{3}[0-9]{3}[0-9]{4}">
+      <div *ngIf="phones.controls[i].invalid && (phones.controls[i].dirty || phones.controls[i].touched)"
+        class="text-danger">
+        <a *ngIf="phones.controls[i].errors?.required">
+          Phone is required.
+        </a>
+        <a *ngIf="phones.controls[i].errors?.pattern">
+          This is an invalid phone.
+        </a>
+      </div>
     </div>
-
-    </div>
-
   </div>
-
 
   <div *ngIf="!edit;else update">
     <button *ngIf="!edit" (click)="saveContact()" class="btn btn-primary" [disabled]="!contactForm.valid">
-      Guardar
+      Save
     </button>
+  </div>
+  <ng-template #update>
+    <button (click)="updateContact()" class="btn btn-danger" [disabled]="!contactForm.valid">
+      Update
+    </button>
+    <button (click)="cancel()" class="btn btn-secondary ml-2">
+      Cancel
+    </button>
+  </ng-template>
 </div>
-<ng-template #update>
-  <button (click)="updateContact()" class="btn btn-danger" [disabled]="!contactForm.valid">
-    Actualizar
-  </button>
-  <button (click)="cancel()" class="btn btn-secondary ml-2">
-    Cancelar
-  </button>
-</ng-template>
-
-</div>
-
-
-<!-- {{contactForm.value | json }} -->

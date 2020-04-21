@@ -1,6 +1,6 @@
 import { ContactoService } from './../contacto.service';
 import { Icontacto } from './../icontacto';
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 
 @Component({
@@ -10,81 +10,58 @@ import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@ang
 })
 export class ContactFormComponent implements OnInit {
 
-  contactForm:FormGroup;
-  contacto:Icontacto;
-  edit:boolean = false;
-
-
-  constructor(private fb:FormBuilder,
-              private ContactoService:ContactoService) { }
+  contactForm: FormGroup;
+  contacto: Icontacto;
+  edit: boolean = false;
+  constructor(
+    private fb: FormBuilder,
+    private ContactService: ContactoService) { }
 
   ngOnInit() {
     this.edit = false;
     this.contactForm = this.fb.group({
-      id:[''],
-      contacto:['',Validators.required],
-      direccion:['',Validators.required],
-      telefonos:this.fb.array([ this.BuildTelefono()])
+      id: [''],
+      contact: ['', Validators.required],
+      address: ['', Validators.required],
+      phones: this.fb.array([this.BuilderPhone()])
     });
-
-    this.ContactoService.editContact.subscribe(contacto =>{
-
-
-      this.telefonos.clear();
-      contacto.telefonos.forEach(() => {
-          this.addTelefono();
-        });
-      this.contactForm.patchValue(contacto);
+    this.ContactService.edit.subscribe(contact => {
+      this.phones.clear();
+      contact.phones.forEach(() => {
+        this.addPhone();
+      });
+      this.contactForm.patchValue(contact);
       this.edit = true;
-
-
-    })
-
-
+    });
   }
-
-  cancel(){
+  cancel() {
     this.contactForm.reset();
-    this.telefonos.clear();
-    this.telefonos.push(this.BuildTelefono());
+    this.phones.clear();
+    this.phones.push(this.BuilderPhone());
     this.edit = false;
   }
-
-  saveContact(){
-
+  saveContact() {
     this.contacto = this.contactForm.value;
-    this.ContactoService.addContacto(this.contacto);
-    this.ContactoService.updateContacts.next(true);
+    this.ContactService.addContact(this.contacto);
     this.cancel();
   }
-
-  updateContact(){
+  updateContact() {
     this.contacto = this.contactForm.value;
-    this.ContactoService.updateContact(this.contacto);
-    this.ContactoService.updateContacts.next(true);
+    this.ContactService.updateContact(this.contacto);
     this.cancel();
   }
-
-  BuildTelefono(): FormControl{
-    return this.fb.control('',Validators.required);
+  BuilderPhone(): FormControl {
+    return this.fb.control('', Validators.required);
   }
-
-  addTelefono(){
-    this.telefonos.push(this.BuildTelefono());
+  addPhone() {
+    this.phones.push(this.BuilderPhone());
   }
-
-get contactoInput() { return this.contactForm.get('contacto'); }
-get direccionInput() { return this.contactForm.get('direccion'); }
-get telefonosInput() { return this.contactForm.get('telefonos'); }
-
-get telefonos():FormArray {
-  return <FormArray>this.contactForm.get('telefonos');
-}
-
-removeTel(index){
-
-  this.telefonos.removeAt(index)
-
-}
+  get contactInput() { return this.contactForm.get('contact'); }
+  get addressInput() { return this.contactForm.get('address'); }
+  get phoneInput() { return this.contactForm.get('phones'); }
+  get phones(): FormArray { return <FormArray>this.contactForm.get('phones'); }
+  removePhone(index: number) {
+    this.phones.removeAt(index);
+  }
 
 }

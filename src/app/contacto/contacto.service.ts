@@ -2,7 +2,7 @@ import { Icontacto } from './icontacto';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
-import { map, tap} from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 
 @Injectable({
@@ -10,54 +10,50 @@ import { map, tap} from 'rxjs/operators';
 })
 export class ContactoService {
 
-  contactos: Icontacto[];
-
-  editContact = new Subject<Icontacto>();
+  contacts: Icontacto[];
+  edit = new Subject<Icontacto>();
   updateContacts = new Subject<boolean>();
+  constructor(private http: HttpClient) { }
 
-
-  constructor(private http: HttpClient) {}
-
-
-   UploadContactJson():Observable<Icontacto[]>{
-
-     return this.http.get<Icontacto>("http://localhost:4200/assets/contactos.json").pipe(
-       map((data:Icontacto) => data.contactos)
-     )
+  UploadContactJson() {
+    if (localStorage.getItem("contacts") === null) {
+      this.http.get<Icontacto>("http://localhost:4200/assets/contacts.json").pipe(map((data: Icontacto) => data.contacts))
+        .subscribe((contacts) => {
+          this.SetContacts(contacts);
+          this.updateContacts.next(true);
+        });
+    } else {
+      this.updateContacts.next(true);
+    }
   }
-
-  getContactos():Icontacto[]{
-    return JSON.parse(localStorage.getItem('contactos'));
-  }
-
-  addContacto(contacto:Icontacto){
-
-    this.contactos = JSON.parse(localStorage.getItem('contactos'))
-    contacto.id = (this.contactos.length + 1).toString();
+  addContact(contacto: Icontacto) {
+    this.contacts = this.getContacts();
+    contacto.id = (this.contacts.length + 1).toString();
     localStorage.clear();
-    this.contactos.push(contacto);
-    localStorage.setItem('contactos',JSON.stringify(this.contactos))
+    this.contacts.push(contacto);
+    this.SetContacts(this.contacts);
     this.updateContacts.next(true);
   }
-
-  updateContact(contactoNew:Icontacto){
-
-    this.contactos = JSON.parse(localStorage.getItem('contactos'))
-    this.contactos = this.contactos.map((contacto:Icontacto)=>{
-      if(contacto.id == contactoNew.id){
-        Object.assign(contacto,contactoNew);
+  updateContact(newContact: Icontacto) {
+    this.contacts = this.getContacts();
+    this.contacts = this.contacts.map((contact: Icontacto) => {
+      if (contact.id == newContact.id) {
+        Object.assign(contact, newContact);
       }
-      return contacto;
+      return contact;
     });
     localStorage.clear();
-    localStorage.setItem('contactos',JSON.stringify(this.contactos))
+    this.SetContacts(this.contacts);
     this.updateContacts.next(true);
-
   }
-
-
-
-
-
+  editContact(contact: Icontacto) {
+    this.edit.next(contact);
+  }
+  getContacts(): Icontacto[] {
+    return JSON.parse(localStorage.getItem('contacts'));
+  }
+  SetContacts(contacts: Icontacto[]): void {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }
 }
 
